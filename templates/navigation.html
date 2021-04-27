@@ -1,7 +1,9 @@
 <header>
     <nav>
-        {% for link in links %}
-        <a href={{link.url}}>{{name}}</a>
-        {% endfor %}}
+        <ul>
+            {% for link in nav %}
+            <li><a href={{ link.url }}>{{ link.name }}</a></li>
+            {% endfor %}
+        </ul>
     </nav>
 </header>
