@@ -3,15 +3,15 @@
 """
 
 from datetime import datetime
-
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from auth.login import valid_login
 
 app = Flask('sdev300flaskapp',
             template_folder='templates')
 
 
 @app.route('/')
-def index():
+def index(user='User'):
     """Routes to the main page"""
     nav = [
         {'name': 'SlevinLabs', 'url': 'https://www.slevinlabs.com'},
@@ -39,6 +39,7 @@ def index():
 
     return render_template(
         'home.html',
+        user=user,
         nav=nav,
         title='SlevinLabs',
         description=description,
@@ -47,3 +48,14 @@ def index():
         items=items,
         time=time
     )
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def register_user():
+    error = None
+    if request.method == 'POST':
+        if valid_login(request.form['username'],
+                       request.form['password']):
+            return index(request.form['username'])
+    else:
+        return render_template('login.html')
