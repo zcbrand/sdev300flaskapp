@@ -3,7 +3,14 @@
 {% block content %}
 <div class="container">
     <h1>{{ title }}</h1>
-    <form action="{{ url_for('login') }}" method="post">
+    <form action="{{ url_for('register') }}" method="post">
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                    </ul>
+        </div>
         <div>
             <label for="username">Username: </label>
             <input type="text" name="username">
@@ -16,6 +23,6 @@
             <input type="submit" class="submit" value="Log In">
         </div>
     </form>
-    <p>Need to <a href="{{ url_for('register') }}">REGISTER</a>?</p>
+    <p>Need to <a href="{{ url_for('login') }}">LOGIN</a>?</p>
 </div>
 {% endblock %}

@@ -132,4 +132,4 @@ dmypy.json
 .idea/
 
 /trials/
-/auth/passfile.txt
+/passfile.txt

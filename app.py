@@ -3,8 +3,8 @@
 """
 
 from datetime import datetime
-from flask import Flask, render_template, request
-from auth.login import valid_login
+from flask import Flask, render_template, request, flash
+from auth.login import valid_login, user_exists, register_user, complexity
 
 app = Flask('sdev300flaskapp',
             template_folder='templates')
@@ -51,11 +51,39 @@ def index(user='User'):
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def register_user():
+def login():
     error = None
     if request.method == 'POST':
         if valid_login(request.form['username'],
                        request.form['password']):
             return index(request.form['username'])
     else:
-        return render_template('login.html')
+        return render_template(
+            'login.html',
+
+        )
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    error = None
+    if request.method == 'POST':
+        if not request.form['username']:
+            error = 'Please enter your Username.'
+        elif not request.form['password']:
+            error = 'Please enter your Password.'
+        elif not user_exists(request.form['username']):
+            error = 'You are already registered'
+        elif not complexity(request.form['password']):
+            error = 'Make your password more complex'
+
+        if error is None:
+            register_user(request.form['username'], request.form['password'])
+        else:
+            flash(error)
+
+    if request.method == 'GET':
+        return render_template(
+            'register.html',
+            title='Register'
+        )
