@@ -1,37 +1,45 @@
+"""
+    Author: Zachary Brandenburg
+"""
+
 import json
 import string
 
 from passlib.hash import sha256_crypt
 
 
-def user_exists(username):
-    with open('../passfile.txt', 'r') as f:
+def user_exists(uname):
+    """Checks if user exists in the passfile"""
+    with open('passfile.txt', 'r') as f:
         for line in f:
             user = json.loads(line)
-            if user['username'] == username:
+            if user['username'] == uname:
                 return True
         return False
 
 
-def complexity(password):
-    if (len(password) >= 8
-            and any(c.islower() for c in password)
-            and any(c.isupper() for c in password)
-            and any(c.isdigit() for c in password)
-            and any(c in string.punctuation for c in password)):
+def complexity(pword):
+    """Confirms and entered password meets the needed complexity"""
+    if (len(pword) >= 12
+            and any(c.islower() for c in pword)
+            and any(c.isupper() for c in pword)
+            and any(c.isdigit() for c in pword)
+            and any(c in string.punctuation for c in pword)):
         return True
     return False
 
 
 def register_user(username, password):
+    """Registers the user"""
     hash_pass = sha256_crypt.hash(password)
-    with open('../passfile.txt', 'a') as f:
+    with open('passfile.txt', 'a') as f:
         info = f'{{"username": "{username}", "password": "{hash_pass}"}}'
         f.write(f'\n{info}')
 
 
 def valid_login(username, password):
-    with open('../passfile.txt', 'r') as f:
+    """Checks fo a valid login"""
+    with open('passfile.txt', 'r') as f:
         for line in f:
             user = json.loads(line)
             if user['username'] == username:

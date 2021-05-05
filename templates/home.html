@@ -2,14 +2,42 @@
 
 {% block content %}
 <div class="container">
-    <h1>{{ title }}</h1>
-    <p>{{ description }}</p>
-    <h2>{{ subtitle }}</h2>
-    <h3>{{ subsub }}</h3>
-    <ol>
-        {% for item in items %}
-        <li>{{ item }}</li>
-        {% endfor %}
-    </ol>
+    <div>
+        <h1>
+            <img src="{{ url_for('static', filename='SlevinLabs_name_logo.png') }}" alt="Slevin Labs" style="height:100px;">
+        </h1>
+    </div>
+    <div>
+        <p>{{ description }}</p>
+        <h2>{{ subtitle }}</h2>
+    </div>
+    <div>
+        <img src="{{ url_for('static', filename='olderdude.png') }}" alt="Gentleman" style="float: left; height: 250px;">
+        <div>
+            <h3>{{ subsub }}</h3>
+            <ol>
+                {% for item in items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div>
+        <h3>Our Services</h3>
+        <table>
+            <tr>
+                <th>SERVICE</th>
+                <th>CONTENTS</th>
+                <th>PRICE</th>
+            </tr>
+            {% for service in services %}
+                <tr>
+                    <td>{{ service.service }}</td>
+                    <td>{{ service.contents }}</td>
+                    <td>{{ service.price }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}
