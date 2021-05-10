@@ -18,13 +18,14 @@ def user_exists(uname):
         return False
 
 
-def complexity(pword):
+def complexity(password):
     """Confirms and entered password meets the needed complexity"""
-    if (len(pword) >= 12
-            and any(c.islower() for c in pword)
-            and any(c.isupper() for c in pword)
-            and any(c.isdigit() for c in pword)
-            and any(c in string.punctuation for c in pword)):
+    if (len(password) >= 12
+            and any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and any(c.isdigit() for c in password)
+            and any(c in string.punctuation for c in password)
+            and password_is_not_common(password)):
         return True
     return False
 
@@ -45,3 +46,14 @@ def valid_login(username, password):
             if user['username'] == username:
                 return sha256_crypt.verify(password, user['password'])
     print('Password not found')
+
+
+def reset_password(username, new_pass, old_pass):
+    """Resets a user password"""
+    if user_exists(username):
+        with open('passfile.txt', 'rw') as f:
+            for line in f:
+                user = json.loads(line)
+                if user['username'] == username and new_pass != old_pass:
+                    
+
