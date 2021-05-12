@@ -39,21 +39,45 @@ def register_user(username, password):
 
 
 def valid_login(username, password):
-    """Checks fo a valid login"""
+    """Checks for a valid login"""
     with open('passfile.txt', 'r') as f:
         for line in f:
             user = json.loads(line)
             if user['username'] == username:
                 return sha256_crypt.verify(password, user['password'])
-    print('Password not found')
+    return False
 
 
 def reset_password(username, new_pass, old_pass):
     """Resets a user password"""
-    if user_exists(username):
-        with open('passfile.txt', 'rw') as f:
-            for line in f:
-                user = json.loads(line)
-                if user['username'] == username and new_pass != old_pass:
+    if valid_login(username, old_pass):
+        accounts = open('passfile.txt', 'r')
+        temp_file = open('temp_file.txt', 'w')
+        with accounts, temp_file:
+            for record in accounts:
+                user = json.loads(record)
+                if user['username'] != username:
+                    temp_file.write(json.dumps(user) + '\n')
+                else:
+                    user['password'] = sha256_crypt.hash(new_pass)
+                    temp_file.write(json.dumps(user) + '\n')
+    return True
                     
 
+def password_is_not_common(password):
+    """Check password against a list of common passwords"""
+    with open('commonPasswords.txt', 'r') as f:
+        for line in f:
+            if line == password:
+                return False
+    return True
+
+
+def matches_last_password(username, new_pass):
+    """Checks for a valid login"""
+    with open('passfile.txt', 'r') as f:
+        for line in f:
+            user = json.loads(line)
+            if user['username'] == username:
+                return sha256_crypt.verify(new_pass, user['password'])
+    return False

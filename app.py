@@ -6,7 +6,8 @@ from datetime import datetime
 
 from flask import Flask, render_template, request, flash, redirect, session
 
-from auth.login import valid_login, user_exists, register_user, complexity
+from auth.login import valid_login, user_exists, register_user, complexity, \
+    password_is_not_common, reset_password, matches_last_password
 
 app = Flask('sdev300flaskapp',
             template_folder='templates',
@@ -100,6 +101,8 @@ def register():
             error = 'Please enter a Password.'
         elif user_exists(request.form.get('username')):
             error = 'You are already registered'
+        elif not password_is_not_common(request.form.get('password')):
+            error = 'Password is in a list of known passwords'
         elif not complexity(request.form.get('password')):
             error = 'Make your password more complex'
 
@@ -114,4 +117,37 @@ def register():
         return render_template(
             'register.html',
             title='Register'
+        )
+
+
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    """ Password update"""
+    error = None
+    if request.method == 'POST':
+        if not request.form['username']:
+            error = 'Please enter a Username.'
+        elif not request.form['password']:
+            error = 'Please enter a Password.'
+        elif valid_login(request.form.get('username'), request.form.get('old_password')):
+            error = 'Incorrect username or password'
+        elif password_is_not_common(request.form.get('new_password')):
+            error = 'Password is in a list of known passwords'
+        elif not complexity(request.form.get('new_password')):
+            error = 'Make your password more complex'
+        elif matches_last_password(request.form.get('username'), request.form.get('new_password')):
+            error = 'Password must not match previous'
+
+        if error is None:
+            reset_password(request.form.get('username'), request.form.get('new_password'),
+                           request.form.get('old_password'))
+            flash('Password Updated')
+            return redirect('/login')
+        else:
+            flash(error)
+            return redirect('/change_password')
+    if request.method == 'GET':
+        return render_template(
+            'change_password.html',
+            title='Change Password'
         )
